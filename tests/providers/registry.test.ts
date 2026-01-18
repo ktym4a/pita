@@ -66,11 +66,11 @@ describe("getDefaultProviderSettings", () => {
 
   it("should have notion enabled by default", () => {
     const settings = getDefaultProviderSettings();
-    expect(settings["notion"]?.enabled).toBe(false);
+    expect(settings["notion"]?.enabled).toBe(true);
   });
 
   it("should have google-docs enabled by default", () => {
     const settings = getDefaultProviderSettings();
-    expect(settings["google-docs"]?.enabled).toBe(false);
+    expect(settings["google-docs"]?.enabled).toBe(true);
   });
 });

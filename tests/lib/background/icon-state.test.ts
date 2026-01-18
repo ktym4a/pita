@@ -1,40 +1,38 @@
-// oxlint-disable import/max-dependencies
 // oxlint-disable max-lines-per-function
+// oxlint-disable import/max-dependencies
 import { describe, expect, it, beforeEach, vi } from "vitest";
 
-// Mock the icon module before importing badge
+// Mock the icon module before importing icon-state
 vi.mock("@/lib/background/icon", () => ({
   ICON_SIZES: [16, 32, 48, 96, 128],
-  ICON_PATHS_FOR_API: {
+  ICON_PATHS: {
     16: "icon/16.png",
     32: "icon/32.png",
     48: "icon/48.png",
     96: "icon/96.png",
     128: "icon/128.png",
   },
-  getAllGrayscaleIcons: vi.fn().mockResolvedValue({
+  getAllDisabledIcons: vi.fn().mockResolvedValue({
     16: { width: 16, height: 16, data: new Uint8ClampedArray(16 * 16 * 4) },
     32: { width: 32, height: 32, data: new Uint8ClampedArray(32 * 32 * 4) },
     48: { width: 48, height: 48, data: new Uint8ClampedArray(48 * 48 * 4) },
     96: { width: 96, height: 96, data: new Uint8ClampedArray(96 * 96 * 4) },
     128: { width: 128, height: 128, data: new Uint8ClampedArray(128 * 128 * 4) },
   }),
-  getGrayscaleIcon: vi.fn(),
-  clearIconCache: vi.fn(),
+  getDisabledIcon: vi.fn(),
 }));
 
+import { ICON_PATHS, ICON_SIZES } from "@/lib/background/icon";
 import {
   getMatchingProviderId,
   getTabInfo,
-  determineBadgeState,
-  applyBadgeState,
-  type BadgeState,
+  isIconDisabled,
+  applyIconState,
   type TabsApi,
   type ActionApi,
-} from "@/lib/background/badge";
-import { ICON_PATHS_FOR_API, ICON_SIZES } from "@/lib/background/icon";
+} from "@/lib/background/icon-state";
 
-describe("background badge", () => {
+describe("background icon state", () => {
   describe("getMatchingProviderId", () => {
     it("should return notion for Notion URLs", () => {
       expect(getMatchingProviderId("https://notion.so/page")).toBe("notion");
@@ -118,124 +116,55 @@ describe("background badge", () => {
     });
   });
 
-  describe("determineBadgeState", () => {
+  describe("isIconDisabled", () => {
     const enabledProviders = {
       notion: { enabled: true },
       "google-docs": { enabled: true },
     };
 
-    it("should return - state when global is disabled", () => {
-      const result = determineBadgeState(false, "https://notion.so/", enabledProviders);
-
-      expect(result).toEqual({
-        text: "-",
-        color: "#6B7280",
-        useGrayIcon: true,
-      });
+    it("should return true when global is disabled", () => {
+      expect(isIconDisabled(false, "https://notion.so/", enabledProviders)).toBe(true);
     });
 
-    it("should return dash state for unsupported URL", () => {
-      const result = determineBadgeState(true, "https://example.com/", enabledProviders);
-
-      expect(result).toEqual({
-        text: "–",
-        color: "#6B7280",
-        useGrayIcon: true,
-      });
+    it("should return true for unsupported URL", () => {
+      expect(isIconDisabled(true, "https://example.com/", enabledProviders)).toBe(true);
     });
 
-    it("should return - state when provider is disabled", () => {
+    it("should return true when provider is disabled", () => {
       const disabledProviders = {
         notion: { enabled: false },
         "google-docs": { enabled: true },
       };
 
-      const result = determineBadgeState(true, "https://notion.so/", disabledProviders);
-
-      expect(result).toEqual({
-        text: "-",
-        color: "#6B7280",
-        useGrayIcon: true,
-      });
+      expect(isIconDisabled(true, "https://notion.so/", disabledProviders)).toBe(true);
     });
 
-    it("should return enabled state for supported URL with enabled provider", () => {
-      const result = determineBadgeState(true, "https://notion.so/", enabledProviders);
-
-      expect(result).toEqual({
-        text: "",
-        color: "",
-        useGrayIcon: false,
-      });
+    it("should return false for supported URL with enabled provider", () => {
+      expect(isIconDisabled(true, "https://notion.so/", enabledProviders)).toBe(false);
     });
 
-    it("should return enabled state for Google Docs", () => {
-      const result = determineBadgeState(
-        true,
-        "https://docs.google.com/document",
-        enabledProviders,
+    it("should return false for Google Docs with enabled provider", () => {
+      expect(isIconDisabled(true, "https://docs.google.com/document", enabledProviders)).toBe(
+        false,
       );
-
-      expect(result).toEqual({
-        text: "",
-        color: "",
-        useGrayIcon: false,
-      });
     });
 
-    it("should handle missing provider in settings", () => {
-      const result = determineBadgeState(true, "https://notion.so/", {});
-
-      expect(result).toEqual({
-        text: "-",
-        color: "#6B7280",
-        useGrayIcon: true,
-      });
+    it("should return true when provider is missing from settings", () => {
+      expect(isIconDisabled(true, "https://notion.so/", {})).toBe(true);
     });
   });
 
-  describe("applyBadgeState", () => {
+  describe("applyIconState", () => {
     let mockAction: ActionApi;
 
     beforeEach(() => {
       mockAction = {
-        setBadgeText: vi.fn().mockResolvedValue(undefined),
-        setBadgeBackgroundColor: vi.fn().mockResolvedValue(undefined),
         setIcon: vi.fn().mockResolvedValue(undefined),
       };
     });
 
-    it("should set badge text", async () => {
-      const state: BadgeState = { text: "OFF", color: "#6B7280", useGrayIcon: true };
-
-      await applyBadgeState(mockAction, 1, state);
-
-      expect(mockAction.setBadgeText).toHaveBeenCalledWith({ text: "OFF", tabId: 1 });
-    });
-
-    it("should set badge color when provided", async () => {
-      const state: BadgeState = { text: "OFF", color: "#6B7280", useGrayIcon: true };
-
-      await applyBadgeState(mockAction, 1, state);
-
-      expect(mockAction.setBadgeBackgroundColor).toHaveBeenCalledWith({
-        color: "#6B7280",
-        tabId: 1,
-      });
-    });
-
-    it("should not set badge color when empty", async () => {
-      const state: BadgeState = { text: "", color: "", useGrayIcon: false };
-
-      await applyBadgeState(mockAction, 1, state);
-
-      expect(mockAction.setBadgeBackgroundColor).not.toHaveBeenCalled();
-    });
-
-    it("should set grayscale icon using imageData when disabled", async () => {
-      const state: BadgeState = { text: "OFF", color: "#6B7280", useGrayIcon: true };
-
-      await applyBadgeState(mockAction, 1, state);
+    it("should set disabled icon when disabled is true", async () => {
+      await applyIconState(mockAction, 1, true);
 
       expect(mockAction.setIcon).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -245,28 +174,26 @@ describe("background badge", () => {
       );
     });
 
-    it("should set normal icon using path when enabled", async () => {
-      const state: BadgeState = { text: "", color: "", useGrayIcon: false };
-
-      await applyBadgeState(mockAction, 1, state);
+    it("should set normal icon when disabled is false", async () => {
+      await applyIconState(mockAction, 1, false);
 
       expect(mockAction.setIcon).toHaveBeenCalledWith({
-        path: ICON_PATHS_FOR_API,
+        path: ICON_PATHS,
         tabId: 1,
       });
     });
   });
 
-  describe("ICON_PATHS_FOR_API", () => {
+  describe("ICON_PATHS", () => {
     it("should have all required sizes", () => {
       for (const size of ICON_SIZES) {
-        expect(ICON_PATHS_FOR_API).toHaveProperty(String(size));
+        expect(ICON_PATHS).toHaveProperty(String(size));
       }
     });
 
     it("should use correct path format", () => {
-      expect(ICON_PATHS_FOR_API[16]).toBe("icon/16.png");
-      expect(ICON_PATHS_FOR_API[128]).toBe("icon/128.png");
+      expect(ICON_PATHS[16]).toBe("icon/16.png");
+      expect(ICON_PATHS[128]).toBe("icon/128.png");
     });
   });
 });

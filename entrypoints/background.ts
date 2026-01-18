@@ -1,4 +1,4 @@
-import { applyBadgeState, determineBadgeState, getTabInfo } from "@/lib/background/badge";
+import { applyIconState, isIconDisabled, getTabInfo } from "@/lib/background/icon-state";
 import { getSettings, watchSettings } from "@/lib/storage/settings";
 
 export default defineBackground({
@@ -8,29 +8,28 @@ export default defineBackground({
     const tabs = browser.tabs;
 
     /**
-     * Update badge and icon based on settings and current tab URL.
+     * Update icon based on settings and current tab URL.
      *
      * @param {number} [tabId] - Tab ID to update for
      */
-    const updateBadge = async (tabId?: number): Promise<void> => {
+    const updateIcon = async (tabId?: number): Promise<void> => {
       const tabInfo = await getTabInfo(tabs, tabId);
       if (!tabInfo || tabInfo.tabId === undefined) return;
 
       const settings = await getSettings();
-      const state = determineBadgeState(settings.globalEnabled, tabInfo.url, settings.providers);
-      console.log("[pita] updateBadge", { url: tabInfo.url, state });
-      await applyBadgeState(action, tabInfo.tabId, state);
+      const disabled = isIconDisabled(settings.globalEnabled, tabInfo.url, settings.providers);
+      await applyIconState(action, tabInfo.tabId, disabled);
     };
 
-    // Update badge when tab is activated
+    // Update icon when tab is activated
     browser.tabs.onActivated.addListener((activeInfo) => {
-      updateBadge(activeInfo.tabId);
+      updateIcon(activeInfo.tabId);
     });
 
-    // Update badge when tab URL changes
+    // Update icon when tab URL changes
     browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
       if (changeInfo.url) {
-        updateBadge(tabId);
+        updateIcon(tabId);
       }
     });
 
@@ -39,12 +38,12 @@ export default defineBackground({
       const allTabs = await browser.tabs.query({});
       for (const tab of allTabs) {
         if (tab.id !== undefined) {
-          updateBadge(tab.id);
+          updateIcon(tab.id);
         }
       }
     });
 
-    // Initial badge state for active tab
-    updateBadge();
+    // Initial icon state for active tab
+    updateIcon();
   },
 });

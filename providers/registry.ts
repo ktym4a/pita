@@ -44,11 +44,11 @@ export interface ProviderRegistration {
 export const PROVIDER_REGISTRY: Readonly<Record<string, ProviderRegistration>> = {
   notion: {
     adapter: notionAdapter,
-    defaultEnabled: false,
+    defaultEnabled: true,
   },
   "google-docs": {
     adapter: googleDocsAdapter,
-    defaultEnabled: false,
+    defaultEnabled: true,
   },
 };
 
