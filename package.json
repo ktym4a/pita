@@ -1,6 +1,6 @@
 {
   "name": "pita",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Slack-compatible copy converter for Notion and Google Docs",
   "homepage": "https://github.com/ktym4a/pita#readme",

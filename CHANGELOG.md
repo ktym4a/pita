@@ -1,5 +1,11 @@
 # pita
 
+## 0.2.0
+
+### Minor Changes
+
+- [#11](https://github.com/ktym4a/pita/pull/11) [`90d30aa`](https://github.com/ktym4a/pita/commit/90d30aa278f837da61e1bbce1631887e8791fcce) Thanks [@ktym4a](https://github.com/ktym4a)! - Enable providers by default and improve disabled icon visual
+
 ## 0.1.0
 
 ### Minor Changes
