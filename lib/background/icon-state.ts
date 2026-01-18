@@ -1,18 +1,9 @@
 import { PROVIDER_REGISTRY } from "@/providers/registry";
 
-import { ICON_PATHS_FOR_API, getAllGrayscaleIcons } from "./icon";
+import { ICON_PATHS, getAllDisabledIcons } from "./icon";
 
 /**
- * Badge and icon state configuration.
- */
-export interface BadgeState {
-  text: string;
-  color: string;
-  useGrayIcon: boolean;
-}
-
-/**
- * Tab information for badge updates.
+ * Tab information for icon updates.
  */
 export interface TabInfo {
   url?: string;
@@ -34,8 +25,6 @@ export interface TabsApi {
  * Browser action API interface for dependency injection.
  */
 export interface ActionApi {
-  setBadgeText: (details: { text: string; tabId: number }) => Promise<void>;
-  setBadgeBackgroundColor: (details: { color: string; tabId: number }) => Promise<void>;
   setIcon: (details: {
     path?: Record<number, string>;
     imageData?: Record<number, ImageData>;
@@ -85,61 +74,42 @@ export async function getTabInfo(tabs: TabsApi, tabId?: number): Promise<TabInfo
 }
 
 /**
- * Determine badge and icon state based on settings and URL.
+ * Determine if the icon should show disabled state.
  *
  * @param {boolean} globalEnabled - Whether extension is globally enabled
  * @param {string | undefined} url - Tab URL
  * @param {Record<string, { enabled: boolean }>} providerSettings - Provider settings
- * @returns {BadgeState} Badge and icon state
+ * @returns {boolean} True if icon should show disabled state
  */
-export function determineBadgeState(
+export function isIconDisabled(
   globalEnabled: boolean,
   url: string | undefined,
   providerSettings: Record<string, { enabled: boolean }>,
-): BadgeState {
-  // Global disabled
-  if (!globalEnabled) {
-    return { text: "-", color: "#6B7280", useGrayIcon: true };
-  }
+): boolean {
+  if (!globalEnabled) return true;
 
   const providerId = getMatchingProviderId(url);
+  if (!providerId) return true;
 
-  // URL not supported
-  if (!providerId) {
-    return { text: "–", color: "#6B7280", useGrayIcon: true };
-  }
-
-  // Provider disabled
-  if (!providerSettings[providerId]?.enabled) {
-    return { text: "-", color: "#6B7280", useGrayIcon: true };
-  }
-
-  // Enabled and supported
-  return { text: "", color: "", useGrayIcon: false };
+  return !providerSettings[providerId]?.enabled;
 }
 
 /**
- * Apply badge and icon state to a tab.
+ * Apply icon state to a tab.
  *
  * @param {ActionApi} action - Browser action API
  * @param {number} tabId - Tab ID
- * @param {BadgeState} state - Badge and icon state
+ * @param {boolean} disabled - Whether to show disabled icon
  */
-export async function applyBadgeState(
+export async function applyIconState(
   action: ActionApi,
   tabId: number,
-  state: BadgeState,
+  disabled: boolean,
 ): Promise<void> {
-  await action.setBadgeText({ text: state.text, tabId });
-
-  if (state.color) {
-    await action.setBadgeBackgroundColor({ color: state.color, tabId });
-  }
-
-  if (state.useGrayIcon) {
-    const grayscaleIcons = await getAllGrayscaleIcons();
-    await action.setIcon({ imageData: grayscaleIcons, tabId });
+  if (disabled) {
+    const disabledIcons = await getAllDisabledIcons();
+    await action.setIcon({ imageData: disabledIcons, tabId });
   } else {
-    await action.setIcon({ path: ICON_PATHS_FOR_API as Record<number, string>, tabId });
+    await action.setIcon({ path: ICON_PATHS as Record<number, string>, tabId });
   }
 }

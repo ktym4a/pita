@@ -22,8 +22,8 @@ describe("settings", () => {
       const settings = await getSettings();
 
       expect(settings.globalEnabled).toBe(true);
-      expect(settings.providers.notion?.enabled).toBe(false);
-      expect(settings.providers["google-docs"]?.enabled).toBe(false);
+      expect(settings.providers.notion?.enabled).toBe(true);
+      expect(settings.providers["google-docs"]?.enabled).toBe(true);
     });
 
     it("should merge stored settings with defaults for new providers", async () => {
@@ -38,7 +38,7 @@ describe("settings", () => {
 
       expect(settings.globalEnabled).toBe(false);
       expect(settings.providers.notion?.enabled).toBe(true);
-      expect(settings.providers["google-docs"]?.enabled).toBe(false);
+      expect(settings.providers["google-docs"]?.enabled).toBe(true);
     });
   });
 
