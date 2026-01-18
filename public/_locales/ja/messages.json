@@ -1,0 +1,42 @@
+{
+  "extensionName": {
+    "message": "Pita - Slack Formatter",
+    "description": "The name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Notion や Google Docs から Slack へのペースト時にリスト、太字、リンクなどの書式を保持",
+    "description": "The description of the extension"
+  },
+  "notificationFormattedForSlack": {
+    "message": "Slack 用にフォーマットしました！",
+    "description": "Notification shown after copying formatted content"
+  },
+  "popupSettings": {
+    "message": "settings",
+    "description": "Section header for settings"
+  },
+  "popupEnablePita": {
+    "message": "Pita を有効化",
+    "description": "Label for the global toggle"
+  },
+  "popupEnablePitaDescription": {
+    "message": "Slack 用にフォーマット",
+    "description": "Description for the global toggle"
+  },
+  "popupServices": {
+    "message": "サービス",
+    "description": "Section header for provider list"
+  },
+  "popupProviderNotion": {
+    "message": "Notion",
+    "description": "Notion provider name"
+  },
+  "popupProviderGoogleDocs": {
+    "message": "Google Docs",
+    "description": "Google Docs provider name"
+  },
+  "popupFooter": {
+    "message": "Notion や Google Docs から書式付きで Slack に貼り付け。",
+    "description": "Footer description text"
+  }
+}

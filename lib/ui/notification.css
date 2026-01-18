@@ -1,0 +1,43 @@
+/* Catppuccin Mocha colors for notification */
+@keyframes pita-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pita-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: rgba(30, 30, 46, 0.85); /* ctp-base with transparency */
+  backdrop-filter: blur(8px);
+  color: #cdd6f4; /* ctp-text */
+  padding: 10px 8px;
+  border-radius: 6px;
+  border: 2px dashed #9399b2; /* ctp-overlay2 */
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 13px;
+  z-index: 2147483647;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  animation: pita-slide-in 300ms ease-out;
+}
+
+.notification.slide-out {
+  animation: pita-slide-out 300ms ease-out forwards;
+}

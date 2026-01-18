@@ -1,0 +1,49 @@
+{
+  "name": "pita",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Slack-compatible copy converter for Notion and Google Docs",
+  "homepage": "https://github.com/ktym4a/pita#readme",
+  "bugs": {
+    "url": "https://github.com/ktym4a/pita/issues"
+  },
+  "license": "MIT",
+  "author": "ktym4a",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ktym4a/pita.git"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "wxt build",
+    "changeset": "changeset",
+    "check": "pnpm lint && pnpm fmt",
+    "check:fix": "pnpm lint:fix && pnpm fmt:fix",
+    "dev": "wxt",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "lint": "oxlint --type-aware --type-check .",
+    "lint:fix": "oxlint --type-aware --type-check --fix .",
+    "postinstall": "wxt prepare",
+    "release": "pnpm zip",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "version": "changeset version",
+    "zip": "wxt zip"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.29.8",
+    "@vitest/coverage-v8": "^4.0.17",
+    "jsdom": "^27.4.0",
+    "oxfmt": "^0.24.0",
+    "oxlint": "^1.39.0",
+    "oxlint-tsgolint": "^0.11.1",
+    "vitest": "^4.0.17",
+    "wxt": "^0.20.13"
+  },
+  "engines": {
+    "node": ">=24",
+    "pnpm": ">=10"
+  }
+}

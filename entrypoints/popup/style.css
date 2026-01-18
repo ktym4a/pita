@@ -1,0 +1,197 @@
+/* Catppuccin Mocha Palette */
+:root {
+  --ctp-crust: #11111b;
+  --ctp-mantle: #181825;
+  --ctp-base: #1e1e2e;
+  --ctp-surface0: #313244;
+  --ctp-surface1: #45475a;
+  --ctp-surface2: #585b70;
+  --ctp-overlay0: #6c7086;
+  --ctp-overlay1: #7f849c;
+  --ctp-overlay2: #9399b2;
+  --ctp-subtext0: #a6adc8;
+  --ctp-subtext1: #bac2de;
+  --ctp-text: #cdd6f4;
+  --ctp-green: #a6e3a1;
+  --ctp-red: #f38ba8;
+  --ctp-peach: #fab387;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 300px;
+  background-color: var(--ctp-base);
+  color: var(--ctp-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+#app {
+  padding: 16px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ctp-surface1);
+}
+
+.header-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ctp-text);
+}
+
+/* Main toggle card */
+.main-toggle {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background-color: var(--ctp-surface0);
+  border: 2px dashed var(--ctp-overlay0);
+  border-radius: 8px;
+}
+
+.main-toggle .toggle-row {
+  padding: 0;
+}
+
+.main-toggle .toggle-label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.main-toggle .toggle-description {
+  margin-top: 2px;
+}
+
+/* Toggle row */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.toggle-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.toggle-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ctp-text);
+}
+
+.toggle-description {
+  font-size: 12px;
+  color: var(--ctp-subtext0);
+}
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background-color: var(--ctp-surface2);
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--ctp-green);
+  outline-offset: 2px;
+}
+
+.toggle.enabled {
+  background-color: var(--ctp-green);
+}
+
+.toggle.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background-color: var(--ctp-base);
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.toggle.enabled .toggle-knob {
+  transform: translateX(16px);
+}
+
+/* Provider section */
+.provider-section {
+  margin-top: 16px;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ctp-subtext0);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.provider-list {
+  background-color: var(--ctp-surface0);
+  border: 2px dashed var(--ctp-overlay0);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.provider-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+}
+
+.provider-item + .provider-item {
+  border-top: 1px solid var(--ctp-surface1);
+}
+
+.provider-label {
+  font-size: 14px;
+  color: var(--ctp-text);
+}
+
+.provider-item.disabled .provider-label {
+  color: var(--ctp-overlay1);
+}
+
+/* Footer */
+.footer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ctp-surface1);
+  font-size: 11px;
+  color: var(--ctp-overlay1);
+  text-align: center;
+}

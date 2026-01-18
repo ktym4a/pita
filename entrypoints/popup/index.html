@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pita Settings</title>
+    <meta name="manifest.type" content="browser_action" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Header -->
+      <div class="header">
+        <img src="/icon/48.png" alt="Pita" class="header-icon" />
+        <h1 class="header-title">Pita</h1>
+      </div>
+
+      <!-- Main toggle -->
+      <div class="main-toggle">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label" data-i18n="popupEnablePita"></div>
+            <div class="toggle-description" data-i18n="popupEnablePitaDescription"></div>
+          </div>
+          <button id="global-toggle" type="button" role="switch" aria-checked="true" class="toggle">
+            <span class="toggle-knob"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Provider section -->
+      <div class="provider-section">
+        <div class="section-title" data-i18n="popupServices"></div>
+        <div class="provider-list">
+          <div id="provider-notion" class="provider-item">
+            <span class="provider-label" data-i18n="popupProviderNotion"></span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked="true"
+              class="toggle"
+              data-provider="notion"
+            >
+              <span class="toggle-knob"></span>
+            </button>
+          </div>
+
+          <div id="provider-google-docs" class="provider-item">
+            <span class="provider-label" data-i18n="popupProviderGoogleDocs"></span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked="true"
+              class="toggle"
+              data-provider="google-docs"
+            >
+              <span class="toggle-knob"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer" data-i18n="popupFooter"></div>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

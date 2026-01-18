@@ -1,0 +1,42 @@
+{
+  "extensionName": {
+    "message": "Pita - Slack Formatter",
+    "description": "The name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Keep lists, bold, links and formatting when pasting into Slack from Notion and Google Docs",
+    "description": "The description of the extension"
+  },
+  "notificationFormattedForSlack": {
+    "message": "Formatted for Slack!",
+    "description": "Notification shown after copying formatted content"
+  },
+  "popupSettings": {
+    "message": "settings",
+    "description": "Section header for settings"
+  },
+  "popupEnablePita": {
+    "message": "Enable Pita",
+    "description": "Label for the global toggle"
+  },
+  "popupEnablePitaDescription": {
+    "message": "Format for Slack",
+    "description": "Description for the global toggle"
+  },
+  "popupServices": {
+    "message": "Services",
+    "description": "Section header for provider list"
+  },
+  "popupProviderNotion": {
+    "message": "Notion",
+    "description": "Notion provider name"
+  },
+  "popupProviderGoogleDocs": {
+    "message": "Google Docs",
+    "description": "Google Docs provider name"
+  },
+  "popupFooter": {
+    "message": "Copy Notion or Google Docs, paste into Slack with formatting.",
+    "description": "Footer description text"
+  }
+}
