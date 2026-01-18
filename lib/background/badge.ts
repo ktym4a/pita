@@ -99,19 +99,19 @@ export function determineBadgeState(
 ): BadgeState {
   // Global disabled
   if (!globalEnabled) {
-    return { text: "OFF", color: "#6B7280", useGrayIcon: true };
+    return { text: "-", color: "#6B7280", useGrayIcon: true };
   }
 
   const providerId = getMatchingProviderId(url);
 
   // URL not supported
   if (!providerId) {
-    return { text: "–", color: "#9CA3AF", useGrayIcon: true };
+    return { text: "–", color: "#6B7280", useGrayIcon: true };
   }
 
   // Provider disabled
   if (!providerSettings[providerId]?.enabled) {
-    return { text: "OFF", color: "#6B7280", useGrayIcon: true };
+    return { text: "-", color: "#6B7280", useGrayIcon: true };
   }
 
   // Enabled and supported

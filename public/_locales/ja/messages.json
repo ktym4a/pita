@@ -4,7 +4,7 @@
     "description": "The name of the extension"
   },
   "extensionDescription": {
-    "message": "Notion や Google Docs から Slack へのペースト時にリスト、太字、リンクなどの書式を保持",
+    "message": "Slack に書式を崩さずペースト — Notion、Google Docs に対応",
     "description": "The description of the extension"
   },
   "notificationFormattedForSlack": {
