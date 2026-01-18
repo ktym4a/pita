@@ -10,7 +10,8 @@
 
 - [#5](https://github.com/ktym4a/pita/pull/5) [`f424956`](https://github.com/ktym4a/pita/commit/f4249569b6b7bc02100755a0c1fc125875ff99b8) Thanks [@ktym4a](https://github.com/ktym4a)! - add CD
 
-- [#9](https://github.com/ktym4a/pita/pull/9) [`421c3b9`](https://github.com/ktym4a/pita/commit/421c3b97417bb5c1be92918bacc87210263e6053) Thanks [@ktym4a](https://github.com/ktym4a)! - - Update popup and notification CSS styles for improved appearance
+- [#9](https://github.com/ktym4a/pita/pull/9) [`421c3b9`](https://github.com/ktym4a/pita/commit/421c3b97417bb5c1be92918bacc87210263e6053) Thanks [@ktym4a](https://github.com/ktym4a)!
+  - Update popup and notification CSS styles for improved appearance
   - Refresh all icon sizes with new design
   - Change badge text color from white to black for better visibility
   - Optimize extension description for SEO and user clarity
