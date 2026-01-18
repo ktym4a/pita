@@ -1,5 +1,11 @@
 # pita
 
+## 0.2.1
+
+### Patch Changes
+
+- [#13](https://github.com/ktym4a/pita/pull/13) [`68b7127`](https://github.com/ktym4a/pita/commit/68b71276ef33606f60accd1a5698f0954929e7a9) Thanks [@ktym4a](https://github.com/ktym4a)! - fix: enable tag creation for private packages in changeset config
+
 ## 0.2.0
 
 ### Minor Changes
