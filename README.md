@@ -1,6 +1,6 @@
 # Pita - Slack Formatter
 
-A Chrome extension that keeps lists, bold, links, and formatting when pasting into Slack from Notion and Google Docs.
+A Chrome extension that pastes into Slack without losing formatting — supports Notion and Google Docs.
 
 ## Features
 

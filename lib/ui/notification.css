@@ -25,13 +25,13 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: rgba(30, 30, 46, 0.85); /* ctp-base with transparency */
+  background-color: rgba(30, 30, 46, 0.8); /* ctp-base with transparency */
   backdrop-filter: blur(8px);
   color: #cdd6f4; /* ctp-text */
   padding: 10px 8px;
   border-radius: 6px;
   border: 2px dashed #9399b2; /* ctp-overlay2 */
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-family: "Noto Sans JP", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
   font-size: 13px;
   z-index: 2147483647;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);

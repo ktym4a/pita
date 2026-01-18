@@ -124,11 +124,11 @@ describe("background badge", () => {
       "google-docs": { enabled: true },
     };
 
-    it("should return OFF state when global is disabled", () => {
+    it("should return - state when global is disabled", () => {
       const result = determineBadgeState(false, "https://notion.so/", enabledProviders);
 
       expect(result).toEqual({
-        text: "OFF",
+        text: "-",
         color: "#6B7280",
         useGrayIcon: true,
       });
@@ -139,12 +139,12 @@ describe("background badge", () => {
 
       expect(result).toEqual({
         text: "–",
-        color: "#9CA3AF",
+        color: "#6B7280",
         useGrayIcon: true,
       });
     });
 
-    it("should return OFF state when provider is disabled", () => {
+    it("should return - state when provider is disabled", () => {
       const disabledProviders = {
         notion: { enabled: false },
         "google-docs": { enabled: true },
@@ -153,7 +153,7 @@ describe("background badge", () => {
       const result = determineBadgeState(true, "https://notion.so/", disabledProviders);
 
       expect(result).toEqual({
-        text: "OFF",
+        text: "-",
         color: "#6B7280",
         useGrayIcon: true,
       });
@@ -187,7 +187,7 @@ describe("background badge", () => {
       const result = determineBadgeState(true, "https://notion.so/", {});
 
       expect(result).toEqual({
-        text: "OFF",
+        text: "-",
         color: "#6B7280",
         useGrayIcon: true,
       });

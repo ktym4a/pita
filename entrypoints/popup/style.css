@@ -1,7 +1,5 @@
 /* Catppuccin Mocha Palette */
 :root {
-  --ctp-crust: #11111b;
-  --ctp-mantle: #181825;
   --ctp-base: #1e1e2e;
   --ctp-surface0: #313244;
   --ctp-surface1: #45475a;
@@ -12,9 +10,7 @@
   --ctp-subtext0: #a6adc8;
   --ctp-subtext1: #bac2de;
   --ctp-text: #cdd6f4;
-  --ctp-green: #a6e3a1;
-  --ctp-red: #f38ba8;
-  --ctp-peach: #fab387;
+  --ctp-flamingo: #f2cdcd;
 }
 
 * {
@@ -27,7 +23,7 @@ body {
   width: 300px;
   background-color: var(--ctp-base);
   color: var(--ctp-text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Noto Sans JP", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
   font-size: 14px;
   line-height: 1.5;
 }
@@ -116,12 +112,12 @@ body {
 }
 
 .toggle:focus-visible {
-  outline: 2px solid var(--ctp-green);
+  outline: 2px solid var(--ctp-flamingo);
   outline-offset: 2px;
 }
 
 .toggle.enabled {
-  background-color: var(--ctp-green);
+  background-color: var(--ctp-flamingo);
 }
 
 .toggle.disabled {

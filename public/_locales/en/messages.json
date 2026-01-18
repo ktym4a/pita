@@ -4,7 +4,7 @@
     "description": "The name of the extension"
   },
   "extensionDescription": {
-    "message": "Keep lists, bold, links and formatting when pasting into Slack from Notion and Google Docs",
+    "message": "Paste into Slack without losing formatting — supports Notion and Google Docs",
     "description": "The description of the extension"
   },
   "notificationFormattedForSlack": {
