@@ -1,15 +1,19 @@
 # Pita - Slack Formatter
 
-A browser extension that keeps lists, bold, links, and formatting when pasting into Slack from Notion and Google Docs.
+A Chrome extension that keeps lists, bold, links, and formatting when pasting into Slack from Notion and Google Docs.
 
 ## Features
 
 - **Notion Support**: Preserves formatting when copying from Notion
 - **Google Docs Support**: Maintains list formatting when copying from Google Docs
 - **Slack Texty Format**: Converts clipboard content to Slack's native texty format
-- **Cross-browser**: Works on Chrome and Firefox
+- **Per-site Toggle**: Enable/disable conversion for each supported site
 
 ## Installation
+
+### From Chrome Web Store
+
+Coming soon.
 
 ### From Source
 
@@ -29,32 +33,27 @@ A browser extension that keeps lists, bold, links, and formatting when pasting i
 3. Build the extension:
 
    ```bash
-   # For Chrome
    pnpm build
-
-   # For Firefox
-   pnpm build:firefox
    ```
 
 4. Load the extension:
-   - **Chrome**: Go to `chrome://extensions/`, enable "Developer mode", click "Load unpacked", and select the `.output/chrome-mv3` folder
-   - **Firefox**: Go to `about:debugging#/runtime/this-firefox`, click "Load Temporary Add-on", and select any file in the `.output/firefox-mv2` folder
+   - Go to `chrome://extensions/`
+   - Enable "Developer mode"
+   - Click "Load unpacked"
+   - Select the `.output/chrome-mv3` folder
 
 ## Development
 
 ### Prerequisites
 
-- Node.js 18+
-- pnpm
+- Node.js 24+
+- pnpm 10+
 
 ### Commands
 
 ```bash
-# Start development server (Chrome)
+# Start development server
 pnpm dev
-
-# Start development server (Firefox)
-pnpm dev:firefox
 
 # Run tests
 pnpm test
@@ -76,37 +75,52 @@ pnpm check:fix
 
 # Build for production
 pnpm build
-pnpm build:firefox
 
 # Create zip for distribution
 pnpm zip
-pnpm zip:firefox
+```
+
+### Release Process
+
+This project uses [Changesets](https://github.com/changesets/changesets) for version management.
+
+```bash
+# Add a changeset after making changes
+pnpm changeset
+
+# Version packages (usually done by CI)
+pnpm version
 ```
 
 ### Project Structure
 
 ```
 pita/
-├── entrypoints/          # Extension entry points
-│   ├── background.ts     # Background script
-│   ├── popup/            # Popup UI
-│   ├── notion.content.ts # Notion content script
-│   └── google-docs.content.ts # Google Docs content script
+├── entrypoints/              # Extension entry points
+│   ├── background.ts         # Background service worker
+│   ├── popup/                # Popup UI
+│   ├── notion.content.ts     # Notion content script
+│   └── google-docs.content.ts
 ├── lib/
-│   ├── core/             # Core functionality
-│   │   ├── clipboard.ts  # Clipboard operations
-│   │   ├── converter/    # HTML to Slack texty converter
+│   ├── background/           # Background script utilities
+│   │   ├── badge.ts          # Badge and icon state management
+│   │   └── icon.ts           # Dynamic icon generation
+│   ├── core/                 # Core functionality
+│   │   ├── clipboard.ts      # Clipboard operations
+│   │   ├── converter/        # HTML to Slack texty converter
 │   │   └── content-script-factory.ts
-│   ├── storage/          # Storage utilities
-│   └── ui/               # UI components
-├── providers/            # Service provider adapters
+│   ├── popup/                # Popup UI logic
+│   ├── storage/              # Storage utilities
+│   └── ui/                   # UI components
+├── providers/                # Service provider adapters
+│   ├── _shared/              # Shared provider utilities
 │   ├── notion/
 │   ├── google-docs/
-│   └── registry.ts       # Provider registry
-├── public/               # Static assets
-│   ├── icon/             # Extension icons
-│   └── _locales/         # i18n messages
-└── tests/                # Test files
+│   └── registry.ts           # Provider registry
+├── public/                   # Static assets
+│   ├── icon/                 # Extension icons
+│   └── _locales/             # i18n messages
+└── tests/                    # Test files
 ```
 
 ## How It Works
