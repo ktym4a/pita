@@ -1,5 +1,11 @@
 # pita
 
+## 0.2.4
+
+### Patch Changes
+
+- [#20](https://github.com/ktym4a/pita/pull/20) [`8fbe547`](https://github.com/ktym4a/pita/commit/8fbe547e79a587060e0173ff6abbd264ef4adabe) Thanks [@ktym4a](https://github.com/ktym4a)! - migrate Chrome Web Store submission to API v2
+
 ## 0.2.3
 
 ### Patch Changes
