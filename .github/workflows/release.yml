@@ -68,11 +68,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Submit to Chrome Web Store
+      - name: Submit to Chrome Web Store (API v2)
         if: steps.changesets.outputs.hasChangesets == 'false'
-        run: pnpm wxt submit --chrome-zip .output/*-chrome.zip
+        run: ./scripts/upload-chrome-v2.sh
         env:
           CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
           CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
           CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
           CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
