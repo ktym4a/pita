@@ -1,5 +1,11 @@
 # pita
 
+## 0.2.2
+
+### Patch Changes
+
+- [#15](https://github.com/ktym4a/pita/pull/15) [`5b43bf2`](https://github.com/ktym4a/pita/commit/5b43bf2523d8f83fbd7c4b8ecbb15b3edc51b2d9) Thanks [@ktym4a](https://github.com/ktym4a)! - Add Chrome Web Store link and badge to README, fix release workflow by integrating publish process
+
 ## 0.2.1
 
 ### Patch Changes
