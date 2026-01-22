@@ -1,5 +1,11 @@
 # pita
 
+## 0.2.3
+
+### Patch Changes
+
+- [#17](https://github.com/ktym4a/pita/pull/17) [`a06a122`](https://github.com/ktym4a/pita/commit/a06a122d260cbab1ffa40d47fc8e851798d56765) Thanks [@ktym4a](https://github.com/ktym4a)! - fix duplicate tag creation in release workflow
+
 ## 0.2.2
 
 ### Patch Changes
