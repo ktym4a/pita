@@ -3,7 +3,15 @@
 # Chrome Web Store API v2 Upload Script
 # Usage: ./scripts/upload-chrome-v2.sh
 
-set -e
+set -euo pipefail
+
+# Check required commands
+for cmd in curl jq node; do
+  if ! command -v "$cmd" &> /dev/null; then
+    echo "Error: Required command '$cmd' not found"
+    exit 1
+  fi
+done
 
 # Required environment variables:
 # - CHROME_CLIENT_ID
@@ -19,7 +27,11 @@ if [ -z "$CHROME_CLIENT_ID" ] || [ -z "$CHROME_CLIENT_SECRET" ] || [ -z "$CHROME
   exit 1
 fi
 
-ZIP_FILE=".output/pita-$(node -p "require('./package.json').version")-chrome.zip"
+VERSION=$(node -p "require('./package.json').version" 2>/dev/null) || {
+  echo "Error: Failed to get version from package.json"
+  exit 1
+}
+ZIP_FILE=".output/pita-${VERSION}-chrome.zip"
 
 if [ ! -f "$ZIP_FILE" ]; then
   echo "Error: ZIP file not found: $ZIP_FILE"
@@ -28,11 +40,14 @@ if [ ! -f "$ZIP_FILE" ]; then
 fi
 
 echo "=== Step 1: Get Access Token ==="
-TOKEN_RESPONSE=$(curl -s "https://oauth2.googleapis.com/token" \
+TOKEN_RESPONSE=$(curl -s --fail-with-body "https://oauth2.googleapis.com/token" \
   -d "client_id=$CHROME_CLIENT_ID" \
   -d "client_secret=$CHROME_CLIENT_SECRET" \
   -d "refresh_token=$CHROME_REFRESH_TOKEN" \
-  -d "grant_type=refresh_token")
+  -d "grant_type=refresh_token") || {
+  echo "Error: Failed to connect to OAuth server"
+  exit 1
+}
 
 ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
 
@@ -51,10 +66,14 @@ echo "Uploading: $ZIP_FILE"
 
 UPLOAD_RESPONSE=$(curl -s -w "\n%{http_code}" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "Content-Type: application/zip" \
   -H "x-goog-api-version: 2" \
   -X POST \
   -T "$ZIP_FILE" \
-  "https://chromewebstore.googleapis.com/upload/v2/publishers/$CHROME_PUBLISHER_ID/items/$CHROME_EXTENSION_ID:upload")
+  "https://chromewebstore.googleapis.com/upload/v2/publishers/${CHROME_PUBLISHER_ID}/items/${CHROME_EXTENSION_ID}:upload") || {
+  echo "Error: Failed to connect to Chrome Web Store API"
+  exit 1
+}
 
 HTTP_CODE=$(echo "$UPLOAD_RESPONSE" | tail -n1)
 UPLOAD_BODY=$(echo "$UPLOAD_RESPONSE" | sed '$d')
@@ -78,7 +97,10 @@ PUBLISH_RESPONSE=$(curl -s -w "\n%{http_code}" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "x-goog-api-version: 2" \
   -X POST \
-  "https://chromewebstore.googleapis.com/v2/publishers/$CHROME_PUBLISHER_ID/items/$CHROME_EXTENSION_ID:publish")
+  "https://chromewebstore.googleapis.com/v2/publishers/${CHROME_PUBLISHER_ID}/items/${CHROME_EXTENSION_ID}:publish") || {
+  echo "Error: Failed to connect to Chrome Web Store API"
+  exit 1
+}
 
 HTTP_CODE=$(echo "$PUBLISH_RESPONSE" | tail -n1)
 PUBLISH_BODY=$(echo "$PUBLISH_RESPONSE" | sed '$d')
