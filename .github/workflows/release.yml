@@ -36,6 +36,7 @@ jobs:
           publish: pnpm run release
           commit: "chore: release"
           title: "chore: release"
+          createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
