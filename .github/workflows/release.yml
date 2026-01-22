@@ -28,7 +28,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create Release Pull Request or Tag
+      - name: Create Release Pull Request or Publish
+        id: changesets
         uses: changesets/action@v1
         with:
           version: pnpm run version
@@ -37,3 +38,40 @@ jobs:
           title: "chore: release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # When no changesets (version already bumped), build and publish
+      - name: Get version from package.json
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        id: pkg
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Build extension
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: pnpm build
+
+      - name: Create zip archive
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: pnpm wxt zip
+
+      - name: Push tags
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: git push --tags
+
+      - name: Upload to GitHub Release
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: pita@${{ steps.pkg.outputs.version }}
+          files: .output/*.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Submit to Chrome Web Store
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: pnpm wxt submit --chrome-zip .output/*-chrome.zip
+        env:
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
