@@ -1,5 +1,7 @@
 # Pita - Slack Formatter
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/agfagjholhlekejimieimjopaljjakjn?logo=google-chrome&logoColor=white)](https://chromewebstore.google.com/detail/pita-slack-formatter/agfagjholhlekejimieimjopaljjakjn)
+
 A Chrome extension that pastes into Slack without losing formatting — supports Notion and Google Docs.
 
 ## Features
@@ -13,7 +15,7 @@ A Chrome extension that pastes into Slack without losing formatting — supports
 
 ### From Chrome Web Store
 
-Coming soon.
+[Install from Chrome Web Store](https://chromewebstore.google.com/detail/pita-slack-formatter/agfagjholhlekejimieimjopaljjakjn)
 
 ### From Source
 
