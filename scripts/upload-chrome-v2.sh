@@ -38,7 +38,8 @@ ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
 
 if [ "$ACCESS_TOKEN" == "null" ] || [ -z "$ACCESS_TOKEN" ]; then
   echo "Error: Failed to get access token"
-  echo "$TOKEN_RESPONSE"
+  # Extract only error message, not the full response (may contain sensitive data)
+  echo "$TOKEN_RESPONSE" | jq -r '.error_description // .error // "Unknown error"'
   exit 1
 fi
 
@@ -59,12 +60,16 @@ HTTP_CODE=$(echo "$UPLOAD_RESPONSE" | tail -n1)
 UPLOAD_BODY=$(echo "$UPLOAD_RESPONSE" | sed '$d')
 
 echo "HTTP Status: $HTTP_CODE"
-echo "Response: $UPLOAD_BODY"
 
 if [ "$HTTP_CODE" != "200" ]; then
   echo "Error: Upload failed"
+  # Extract only error info, not full response
+  echo "$UPLOAD_BODY" | jq -r '.error.message // .error // "Unknown error"' 2>/dev/null || echo "Failed to parse error"
   exit 1
 fi
+
+UPLOAD_STATE=$(echo "$UPLOAD_BODY" | jq -r '.uploadState // "UNKNOWN"')
+echo "Upload state: $UPLOAD_STATE"
 
 echo ""
 echo "=== Step 3: Submit for Review (API v2) ==="
@@ -79,12 +84,16 @@ HTTP_CODE=$(echo "$PUBLISH_RESPONSE" | tail -n1)
 PUBLISH_BODY=$(echo "$PUBLISH_RESPONSE" | sed '$d')
 
 echo "HTTP Status: $HTTP_CODE"
-echo "Response: $PUBLISH_BODY"
 
 if [ "$HTTP_CODE" != "200" ]; then
-  echo "Warning: Publish may have failed"
+  echo "Error: Publish failed"
+  # Extract only error info, not full response
+  echo "$PUBLISH_BODY" | jq -r '.error.message // .error // "Unknown error"' 2>/dev/null || echo "Failed to parse error"
   exit 1
 fi
+
+PUBLISH_STATUS=$(echo "$PUBLISH_BODY" | jq -r '.status[0] // "UNKNOWN"')
+echo "Publish status: $PUBLISH_STATUS"
 
 echo ""
 echo "=== Done ==="
