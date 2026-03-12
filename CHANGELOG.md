@@ -1,5 +1,11 @@
 # pita
 
+## 0.3.3
+
+### Patch Changes
+
+- [#35](https://github.com/ktym4a/pita/pull/35) [`e127ed4`](https://github.com/ktym4a/pita/commit/e127ed40ab3d6976b77a356c5578b1d146dc5b9b) Thanks [@ktym4a](https://github.com/ktym4a)! - fix: re-release to submit extension to Chrome Web Store
+
 ## 0.3.2
 
 ### Patch Changes
