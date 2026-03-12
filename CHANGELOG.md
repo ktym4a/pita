@@ -1,5 +1,11 @@
 # pita
 
+## 0.3.1
+
+### Patch Changes
+
+- [#31](https://github.com/ktym4a/pita/pull/31) [`f425467`](https://github.com/ktym4a/pita/commit/f425467ab12c304fdaed91e760f04a3253963f4a) Thanks [@ktym4a](https://github.com/ktym4a)! - fix: make release tag script idempotent to handle re-runs
+
 ## 0.3.0
 
 ### Minor Changes
