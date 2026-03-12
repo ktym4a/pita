@@ -173,7 +173,12 @@ function processTextNode(
         prevHadNewFormatting = false;
       }
       const collapsed = lines[i].replace(/\s+/g, " ");
-      ({ result, prevHadNewFormatting } = appendTextSegment(result, collapsed, formatting, prevHadNewFormatting));
+      ({ result, prevHadNewFormatting } = appendTextSegment(
+        result,
+        collapsed,
+        formatting,
+        prevHadNewFormatting,
+      ));
     }
     return { result, prevHadNewFormatting };
   }
