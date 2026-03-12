@@ -1,5 +1,15 @@
 # pita
 
+## 0.3.0
+
+### Minor Changes
+
+- [#28](https://github.com/ktym4a/pita/pull/28) [`84246a7`](https://github.com/ktym4a/pita/commit/84246a7bae4c64ab08e02aca165f1951fbbbb817) Thanks [@ktym4a](https://github.com/ktym4a)! - feat: add markdown output mode for Slack's plain text editor
+
+### Patch Changes
+
+- [#23](https://github.com/ktym4a/pita/pull/23) [`4c2914a`](https://github.com/ktym4a/pita/commit/4c2914ab14e04345ca0ba9340c05f1e87ef17e1c) Thanks [@dependabot](https://github.com/apps/dependabot)! - chore(deps-dev): bump the dev-dependencies group across 1 directory with 5 updates
+
 ## 0.2.4
 
 ### Patch Changes
