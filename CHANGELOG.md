@@ -1,5 +1,13 @@
 # pita
 
+## 0.3.2
+
+### Patch Changes
+
+- [#33](https://github.com/ktym4a/pita/pull/33) [`db31fde`](https://github.com/ktym4a/pita/commit/db31fdeb21ecbaf6f877425efa0e521303bf3a8c) Thanks [@ktym4a](https://github.com/ktym4a)! - fix: improve Chrome Web Store upload error handling with retry and diagnostics
+
+- [#33](https://github.com/ktym4a/pita/pull/33) [`db31fde`](https://github.com/ktym4a/pita/commit/db31fdeb21ecbaf6f877425efa0e521303bf3a8c) Thanks [@ktym4a](https://github.com/ktym4a)! - fix: make release tag script idempotent to handle re-runs
+
 ## 0.3.1
 
 ### Patch Changes
