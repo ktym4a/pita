@@ -75,6 +75,23 @@ export function writeSlackTexty(plainText: string, slackTexty: SlackTexty): void
 }
 
 /**
+ * Write plain text to clipboard.
+ *
+ * Used when markdown mode is active. Only sets text/plain
+ * since Slack's plain text editor renders markdown from plain text.
+ *
+ * Uses the Clipboard API (navigator.clipboard.writeText) instead of
+ * execCommand('copy') because some apps (e.g., Notion) have copy event
+ * handlers that overwrite text/plain data. The Clipboard API bypasses
+ * copy events entirely and writes directly to the system clipboard.
+ *
+ * @param {string} text - Markdown-formatted text
+ */
+export async function writePlainText(text: string): Promise<void> {
+  await navigator.clipboard.writeText(text);
+}
+
+/**
  * Check if copy keyboard shortcut was pressed.
  *
  * Handles both:

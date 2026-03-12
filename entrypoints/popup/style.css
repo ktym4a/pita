@@ -141,6 +141,26 @@ body {
   transform: translateX(16px);
 }
 
+/* Mode section */
+.mode-section {
+  margin-top: 16px;
+}
+
+.mode-toggle-card {
+  padding: 8px 12px;
+  background-color: var(--ctp-surface0);
+  border: 2px dashed var(--ctp-overlay0);
+  border-radius: 8px;
+}
+
+.mode-toggle-card .toggle-row {
+  padding: 0;
+}
+
+.mode-toggle-card.disabled .toggle-label {
+  color: var(--ctp-overlay1);
+}
+
 /* Provider section */
 .provider-section {
   margin-top: 16px;

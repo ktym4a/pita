@@ -38,11 +38,27 @@ export function applyI18n(doc: Document, i18n: I18nApi): void {
  * @param {string[]} providerIds - List of provider IDs
  */
 export function updateUI(doc: Document, settings: PitaSettings, providerIds: string[]): void {
+  const globalEnabled = settings.globalEnabled;
+
   const globalToggle = doc.getElementById("global-toggle");
   if (globalToggle) {
-    const enabled = settings.globalEnabled;
-    globalToggle.setAttribute("aria-checked", String(enabled));
-    globalToggle.classList.toggle("enabled", enabled);
+    globalToggle.setAttribute("aria-checked", String(globalEnabled));
+    globalToggle.classList.toggle("enabled", globalEnabled);
+  }
+
+  // Update markdown mode toggle
+  const markdownToggle = doc.getElementById("markdown-toggle");
+  if (markdownToggle) {
+    const isMarkdown = settings.outputMode === "markdown";
+    markdownToggle.setAttribute("aria-checked", String(isMarkdown));
+    markdownToggle.classList.toggle("enabled", isMarkdown);
+    markdownToggle.classList.toggle("disabled", !globalEnabled);
+    (markdownToggle as HTMLButtonElement).disabled = !globalEnabled;
+
+    const modeCard = markdownToggle.closest(".mode-toggle-card");
+    if (modeCard) {
+      modeCard.classList.toggle("disabled", !globalEnabled);
+    }
   }
 
   for (const providerId of providerIds) {
@@ -51,7 +67,6 @@ export function updateUI(doc: Document, settings: PitaSettings, providerIds: str
 
     if (row && toggle) {
       const providerEnabled = settings.providers[providerId]?.enabled ?? true;
-      const globalEnabled = settings.globalEnabled;
 
       toggle.setAttribute("aria-checked", String(providerEnabled));
       toggle.classList.toggle("enabled", providerEnabled);
@@ -70,15 +85,20 @@ export function updateUI(doc: Document, settings: PitaSettings, providerIds: str
  * @param {string[]} providerIds - List of provider IDs
  * @param {Function} onGlobalToggle - Callback for global toggle click
  * @param {Function} onProviderToggle - Callback for provider toggle click
+ * @param {Function} onMarkdownToggle - Callback for markdown toggle click
  */
 export function setupToggleHandlers(
   doc: Document,
   providerIds: string[],
   onGlobalToggle: () => void,
   onProviderToggle: (providerId: string) => void,
+  onMarkdownToggle: () => void,
 ): void {
   const globalToggle = doc.getElementById("global-toggle");
   globalToggle?.addEventListener("click", onGlobalToggle);
+
+  const markdownToggle = doc.getElementById("markdown-toggle");
+  markdownToggle?.addEventListener("click", onMarkdownToggle);
 
   for (const providerId of providerIds) {
     const toggle = doc.querySelector(`[data-provider="${providerId}"]`);

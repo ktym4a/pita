@@ -15,6 +15,13 @@ import { storage } from "#imports";
 import { getDefaultProviderSettings } from "@/providers/registry";
 
 /**
+ * Output mode for clipboard content.
+ * - "texty": Slack's internal rich text format (for rich editor)
+ * - "markdown": Slack-compatible markdown (for plain text editor)
+ */
+export type OutputMode = "texty" | "markdown";
+
+/**
  * Provider-specific settings
  */
 export interface ProviderSettings {
@@ -27,6 +34,8 @@ export interface ProviderSettings {
 export interface PitaSettings {
   /** Master switch - if false, all providers are disabled */
   globalEnabled: boolean;
+  /** Output format mode */
+  outputMode: OutputMode;
   /** Per-provider settings, keyed by provider ID */
   providers: Record<string, ProviderSettings>;
 }
@@ -37,6 +46,7 @@ export interface PitaSettings {
  */
 const DEFAULT_SETTINGS: PitaSettings = {
   globalEnabled: true,
+  outputMode: "texty",
   providers: getDefaultProviderSettings(),
 };
 
@@ -49,6 +59,24 @@ export const pitaSettings = storage.defineItem<PitaSettings>("local:pita-setting
 });
 
 /**
+ * Merge stored settings with defaults.
+ * Ensures new providers added in updates get their default settings.
+ *
+ * @param {PitaSettings} stored - Settings from storage
+ * @returns {PitaSettings} Merged settings
+ */
+function mergeWithDefaults(stored: PitaSettings): PitaSettings {
+  return {
+    ...DEFAULT_SETTINGS,
+    ...stored,
+    providers: {
+      ...DEFAULT_SETTINGS.providers,
+      ...stored.providers,
+    },
+  };
+}
+
+/**
  * Get current settings.
  *
  * Merges stored settings with defaults to handle:
@@ -59,15 +87,7 @@ export const pitaSettings = storage.defineItem<PitaSettings>("local:pita-setting
  */
 export async function getSettings(): Promise<PitaSettings> {
   const stored = await pitaSettings.getValue();
-  // Deep merge: stored overrides defaults, but new providers get defaults
-  return {
-    ...DEFAULT_SETTINGS,
-    ...stored,
-    providers: {
-      ...DEFAULT_SETTINGS.providers,
-      ...stored.providers,
-    },
-  };
+  return mergeWithDefaults(stored);
 }
 
 /**
@@ -111,6 +131,28 @@ export async function toggleGlobalEnabled(): Promise<boolean> {
 }
 
 /**
+ * Get current output mode.
+ *
+ * @returns {Promise<OutputMode>} Current output mode
+ */
+export async function getOutputMode(): Promise<OutputMode> {
+  const settings = await getSettings();
+  return settings.outputMode;
+}
+
+/**
+ * Toggle output mode between "texty" and "markdown".
+ *
+ * @returns {Promise<OutputMode>} New mode after toggle
+ */
+export async function toggleOutputMode(): Promise<OutputMode> {
+  const settings = await getSettings();
+  settings.outputMode = settings.outputMode === "texty" ? "markdown" : "texty";
+  await saveSettings(settings);
+  return settings.outputMode;
+}
+
+/**
  * Toggle provider enabled state.
  * Creates provider entry if it doesn't exist.
  *
@@ -142,23 +184,6 @@ export function watchSettings(
   callback: (newSettings: PitaSettings, oldSettings: PitaSettings) => void,
 ): () => void {
   return pitaSettings.watch((newValue, oldValue) => {
-    // Merge with defaults to ensure new providers get their default settings
-    const mergedNew = {
-      ...DEFAULT_SETTINGS,
-      ...newValue,
-      providers: {
-        ...DEFAULT_SETTINGS.providers,
-        ...newValue.providers,
-      },
-    };
-    const mergedOld = {
-      ...DEFAULT_SETTINGS,
-      ...oldValue,
-      providers: {
-        ...DEFAULT_SETTINGS.providers,
-        ...oldValue.providers,
-      },
-    };
-    callback(mergedNew, mergedOld);
+    callback(mergeWithDefaults(newValue), mergeWithDefaults(oldValue));
   });
 }
