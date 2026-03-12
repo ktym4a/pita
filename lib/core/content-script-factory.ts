@@ -16,13 +16,9 @@ import type { ContentScriptContext } from "wxt/utils/content-script-context";
 
 import type { ServiceAdapter } from "@/providers/_shared/types";
 
-import {
-  isCopyShortcut,
-  waitForClipboard,
-  readClipboardHtml,
-  writeSlackTexty,
-} from "@/lib/core/clipboard";
-import { convertToSlackTexty, convertToPlainText } from "@/lib/core/converter";
+import { isCopyShortcut, waitForClipboard, readClipboardHtml } from "@/lib/core/clipboard";
+import { processAndWrite } from "@/lib/core/process-copy";
+import { type OutputMode, getOutputMode } from "@/lib/storage/settings";
 import { initNotification, showNotification } from "@/lib/ui/notification";
 
 /**
@@ -31,11 +27,12 @@ import { initNotification, showNotification } from "@/lib/ui/notification";
 export interface ContentScriptOptions {
   /** The service adapter for provider-specific behavior */
   readonly adapter: ServiceAdapter;
-  /** Message to show in notification after successful copy */
-  readonly notificationMessage: string;
+  /** Notification messages keyed by output mode */
+  readonly notificationMessages: Record<OutputMode, string>;
   /**
-   * Optional filter to determine if HTML should be processed.
-   * Use case: Google Docs only processes content containing lists.
+   * Optional filter to determine if HTML should be processed (texty mode only).
+   * Use case: Google Docs only processes content containing lists in texty mode.
+   * In markdown mode, all HTML is processed regardless of this filter.
    * If not provided, all HTML content is processed.
    */
   readonly htmlFilter?: (html: string) => boolean;
@@ -51,10 +48,9 @@ export interface ContentScriptOptions {
  * 2. Check if copy shortcut (Cmd/Ctrl+C) was pressed
  * 3. Wait for source app to update clipboard
  * 4. Read HTML from clipboard
- * 5. Apply optional HTML filter (e.g., containsLists for Google Docs)
- * 6. Convert HTML to Slack texty format
- * 7. Write converted content back to clipboard
- * 8. Show success notification
+ * 5. Apply optional HTML filter in texty mode (e.g., containsLists for Google Docs)
+ * 6. Convert HTML to appropriate format and write to clipboard
+ * 7. Show success notification
  *
  * Note: The enabled state check is intentionally NOT included here.
  * Each content script handles its own enabled state to allow for
@@ -66,7 +62,7 @@ export interface ContentScriptOptions {
 export async function createContentScriptHandler(
   options: ContentScriptOptions,
 ): Promise<(e: KeyboardEvent) => Promise<void>> {
-  const { adapter, notificationMessage, htmlFilter, ctx } = options;
+  const { adapter, notificationMessages, htmlFilter, ctx } = options;
 
   // Initialize notification UI with Shadow Root
   await initNotification(ctx);
@@ -81,16 +77,18 @@ export async function createContentScriptHandler(
     const html = await readClipboardHtml();
     if (!html) return;
 
-    // Apply optional HTML filter (e.g., Google Docs only processes lists)
-    if (htmlFilter && !htmlFilter(html)) return;
+    // Read output mode first — needed to decide whether to apply HTML filter
+    const outputMode = await getOutputMode();
 
-    const slackTexty = convertToSlackTexty(html, adapter);
-    // Skip if conversion produced no operations (empty or unsupported content)
-    if (slackTexty.ops.length === 0) return;
+    // Apply optional HTML filter in texty mode only.
+    // In texty mode, Slack natively handles most HTML formatting, so we only
+    // intercept lists (which break on paste). In markdown mode, ALL formatting
+    // must be converted to Slack markdown, so the filter is skipped.
+    if (outputMode !== "markdown" && htmlFilter && !htmlFilter(html)) return;
+    const written = await processAndWrite(html, adapter, outputMode);
 
-    // Plain text is used as fallback for apps that don't support slack/texty
-    const plainText = convertToPlainText(html);
-    writeSlackTexty(plainText, slackTexty);
-    showNotification(notificationMessage);
+    if (written) {
+      showNotification(notificationMessages[outputMode]);
+    }
   };
 }

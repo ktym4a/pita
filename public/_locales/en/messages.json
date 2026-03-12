@@ -11,6 +11,10 @@
     "message": "Formatted for Slack!",
     "description": "Notification shown after copying formatted content"
   },
+  "notificationFormattedAsMarkdown": {
+    "message": "Copied as Markdown!",
+    "description": "Notification shown after copying content as markdown"
+  },
   "popupSettings": {
     "message": "settings",
     "description": "Section header for settings"
@@ -22,6 +26,18 @@
   "popupEnablePitaDescription": {
     "message": "Format for Slack",
     "description": "Description for the global toggle"
+  },
+  "popupOutputMode": {
+    "message": "Output",
+    "description": "Section header for output mode"
+  },
+  "popupMarkdownMode": {
+    "message": "Markdown Mode",
+    "description": "Label for the markdown mode toggle"
+  },
+  "popupMarkdownModeDescription": {
+    "message": "For Slack's plain text editor",
+    "description": "Description for the markdown mode toggle"
   },
   "popupServices": {
     "message": "Services",

@@ -19,7 +19,10 @@ export default defineContentScript({
 
     const handleCopy = await createContentScriptHandler({
       adapter: notionAdapter,
-      notificationMessage: browser.i18n.getMessage("notificationFormattedForSlack"),
+      notificationMessages: {
+        texty: browser.i18n.getMessage("notificationFormattedForSlack"),
+        markdown: browser.i18n.getMessage("notificationFormattedAsMarkdown"),
+      },
       ctx,
     });
 

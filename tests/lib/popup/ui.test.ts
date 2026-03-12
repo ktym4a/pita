@@ -1,3 +1,4 @@
+// oxlint-disable max-lines
 import { describe, expect, it, beforeEach, vi } from "vitest";
 
 import type { PitaSettings } from "@/lib/storage/settings";
@@ -12,6 +13,7 @@ function createTestDOM(html: string): void {
 function createDefaultSettings(overrides: Partial<PitaSettings> = {}): PitaSettings {
   return {
     globalEnabled: true,
+    outputMode: "texty",
     providers: {
       notion: { enabled: true },
       "google-docs": { enabled: true },
@@ -203,15 +205,67 @@ describe("popup/ui", () => {
 
       expect(() => updateUI(document, settings, PROVIDER_IDS)).not.toThrow();
     });
+
+    describe("markdown toggle", () => {
+      const markdownToggleHtml = `
+        <div class="mode-toggle-card">
+          <button id="markdown-toggle" aria-checked="false"></button>
+        </div>
+      `;
+
+      it("should update markdown toggle when mode is markdown", () => {
+        createTestDOM(markdownToggleHtml);
+        const settings = createDefaultSettings({ outputMode: "markdown" });
+
+        updateUI(document, settings, PROVIDER_IDS);
+
+        const toggle = document.getElementById("markdown-toggle");
+        expect(toggle?.getAttribute("aria-checked")).toBe("true");
+        expect(toggle?.classList.contains("enabled")).toBe(true);
+      });
+
+      it("should update markdown toggle when mode is texty", () => {
+        createTestDOM(markdownToggleHtml);
+        const settings = createDefaultSettings({ outputMode: "texty" });
+
+        updateUI(document, settings, PROVIDER_IDS);
+
+        const toggle = document.getElementById("markdown-toggle");
+        expect(toggle?.getAttribute("aria-checked")).toBe("false");
+        expect(toggle?.classList.contains("enabled")).toBe(false);
+      });
+
+      it("should disable markdown toggle when global is disabled", () => {
+        createTestDOM(markdownToggleHtml);
+        const settings = createDefaultSettings({ globalEnabled: false });
+
+        updateUI(document, settings, PROVIDER_IDS);
+
+        const toggle = document.getElementById("markdown-toggle") as HTMLButtonElement;
+        expect(toggle?.disabled).toBe(true);
+        expect(toggle?.classList.contains("disabled")).toBe(true);
+      });
+
+      it("should add disabled class to mode card when global is disabled", () => {
+        createTestDOM(markdownToggleHtml);
+        const settings = createDefaultSettings({ globalEnabled: false });
+
+        updateUI(document, settings, PROVIDER_IDS);
+
+        const card = document.querySelector(".mode-toggle-card");
+        expect(card?.classList.contains("disabled")).toBe(true);
+      });
+    });
   });
 
+  // oxlint-disable-next-line max-lines-per-function
   describe("setupToggleHandlers", () => {
     it("should call onGlobalToggle when global toggle is clicked", () => {
       createTestDOM(`<button id="global-toggle"></button>`);
       const onGlobalToggle = vi.fn();
       const onProviderToggle = vi.fn();
 
-      setupToggleHandlers(document, PROVIDER_IDS, onGlobalToggle, onProviderToggle);
+      setupToggleHandlers(document, PROVIDER_IDS, onGlobalToggle, onProviderToggle, vi.fn());
 
       const toggle = document.getElementById("global-toggle");
       toggle?.click();
@@ -228,13 +282,34 @@ describe("popup/ui", () => {
       const onGlobalToggle = vi.fn();
       const onProviderToggle = vi.fn();
 
-      setupToggleHandlers(document, PROVIDER_IDS, onGlobalToggle, onProviderToggle);
+      setupToggleHandlers(document, PROVIDER_IDS, onGlobalToggle, onProviderToggle, vi.fn());
 
       const notionToggle = document.querySelector('[data-provider="notion"]') as HTMLElement;
       notionToggle?.click();
 
       expect(onProviderToggle).toHaveBeenCalledTimes(1);
       expect(onProviderToggle).toHaveBeenCalledWith("notion");
+    });
+
+    it("should call onMarkdownToggle when markdown toggle is clicked", () => {
+      createTestDOM(`<button id="markdown-toggle"></button>`);
+      const onGlobalToggle = vi.fn();
+      const onProviderToggle = vi.fn();
+      const onMarkdownToggle = vi.fn();
+
+      setupToggleHandlers(
+        document,
+        PROVIDER_IDS,
+        onGlobalToggle,
+        onProviderToggle,
+        onMarkdownToggle,
+      );
+
+      const toggle = document.getElementById("markdown-toggle");
+      toggle?.click();
+
+      expect(onMarkdownToggle).toHaveBeenCalledTimes(1);
+      expect(onGlobalToggle).not.toHaveBeenCalled();
     });
 
     it("should handle missing elements gracefully", () => {
@@ -244,7 +319,7 @@ describe("popup/ui", () => {
       const onProviderToggle = vi.fn();
 
       expect(() =>
-        setupToggleHandlers(document, PROVIDER_IDS, onGlobalToggle, onProviderToggle),
+        setupToggleHandlers(document, PROVIDER_IDS, onGlobalToggle, onProviderToggle, vi.fn()),
       ).not.toThrow();
     });
   });

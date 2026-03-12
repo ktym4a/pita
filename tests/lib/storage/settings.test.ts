@@ -4,9 +4,11 @@ import { fakeBrowser } from "wxt/testing/fake-browser";
 
 import {
   getSettings,
+  getOutputMode,
   saveSettings,
   isProviderEnabled,
   toggleGlobalEnabled,
+  toggleOutputMode,
   toggleProviderEnabled,
   watchSettings,
 } from "@/lib/storage/settings";
@@ -22,6 +24,7 @@ describe("settings", () => {
       const settings = await getSettings();
 
       expect(settings.globalEnabled).toBe(true);
+      expect(settings.outputMode).toBe("texty");
       expect(settings.providers.notion?.enabled).toBe(true);
       expect(settings.providers["google-docs"]?.enabled).toBe(true);
     });
@@ -46,6 +49,7 @@ describe("settings", () => {
     it("should persist settings to storage", async () => {
       const settings = {
         globalEnabled: false,
+        outputMode: "texty" as const,
         providers: { notion: { enabled: true }, "google-docs": { enabled: false } },
       };
 
@@ -117,6 +121,29 @@ describe("settings", () => {
 
       // First toggle: default true -> false
       expect(await toggleProviderEnabled("new-provider")).toBe(false);
+    });
+
+    it("should toggle output mode between texty and markdown", async () => {
+      await fakeBrowser.storage.local.set({
+        "pita-settings": { globalEnabled: true, outputMode: "texty", providers: {} },
+      });
+
+      expect(await toggleOutputMode()).toBe("markdown");
+      expect(await toggleOutputMode()).toBe("texty");
+    });
+  });
+
+  describe("output mode", () => {
+    it("should default to texty when not set", async () => {
+      expect(await getOutputMode()).toBe("texty");
+    });
+
+    it("should return stored output mode", async () => {
+      await fakeBrowser.storage.local.set({
+        "pita-settings": { globalEnabled: true, outputMode: "markdown", providers: {} },
+      });
+
+      expect(await getOutputMode()).toBe("markdown");
     });
   });
 

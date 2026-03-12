@@ -21,7 +21,7 @@
 
 import type { SlackTextAttributes, SlackTextOp } from "@/providers/_shared/types";
 
-import { ORDERED_LIST_PATTERNS } from "@/providers/_shared/constants";
+import { isOrderedListItem } from "@/providers/_shared/constants";
 
 import type { BlockHandler, HandlerContext } from "../types";
 
@@ -39,12 +39,7 @@ export const listItemHandler: BlockHandler = {
     const level = context.adapter.getListLevel(element);
 
     // Determine list type: ordered vs bullet
-    // Check both CSS listStyleType and parent tag
-    const listType = (element as HTMLElement).style?.listStyleType ?? "";
-    const parentTag = element.parentElement?.tagName?.toLowerCase();
-
-    // Ordered if parent is <ol> OR listStyleType indicates numbering
-    const isOrdered = parentTag === "ol" || ORDERED_LIST_PATTERNS.some((p) => listType.includes(p));
+    const isOrdered = isOrderedListItem(element);
 
     // Get formatted content (skips nested <ul>/<ol> elements)
     const contentOps = context.getFormattedOps(element);

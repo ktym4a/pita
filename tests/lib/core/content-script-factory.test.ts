@@ -11,12 +11,14 @@ vi.mock("@/lib/core/clipboard", () => ({
   isCopyShortcut: vi.fn(),
   waitForClipboard: vi.fn(),
   readClipboardHtml: vi.fn(),
-  writeSlackTexty: vi.fn(),
 }));
 
-vi.mock("@/lib/core/converter", () => ({
-  convertToSlackTexty: vi.fn(),
-  convertToPlainText: vi.fn(),
+vi.mock("@/lib/core/process-copy", () => ({
+  processAndWrite: vi.fn(),
+}));
+
+vi.mock("@/lib/storage/settings", () => ({
+  getOutputMode: vi.fn(),
 }));
 
 vi.mock("@/lib/ui/notification", () => ({
@@ -25,7 +27,8 @@ vi.mock("@/lib/ui/notification", () => ({
 }));
 
 import * as clipboard from "@/lib/core/clipboard";
-import * as converter from "@/lib/core/converter";
+import * as processCopy from "@/lib/core/process-copy";
+import * as settings from "@/lib/storage/settings";
 import * as notification from "@/lib/ui/notification";
 
 function createMockAdapter(): ServiceAdapter {
@@ -50,7 +53,8 @@ function setupMocks(
   overrides: {
     isCopyShortcut?: boolean;
     clipboardHtml?: string | null;
-    slackTextyOps?: Array<{ insert: string }>;
+    outputMode?: "texty" | "markdown";
+    processAndWriteResult?: boolean;
   } = {},
 ): void {
   (clipboard.isCopyShortcut as Mock).mockReturnValue(overrides.isCopyShortcut ?? true);
@@ -58,10 +62,8 @@ function setupMocks(
   (clipboard.readClipboardHtml as Mock).mockResolvedValue(
     "clipboardHtml" in overrides ? overrides.clipboardHtml : "<p>test</p>",
   );
-  (converter.convertToSlackTexty as Mock).mockReturnValue({
-    ops: overrides.slackTextyOps ?? [{ insert: "test" }],
-  });
-  (converter.convertToPlainText as Mock).mockReturnValue("test");
+  (processCopy.processAndWrite as Mock).mockReturnValue(overrides.processAndWriteResult ?? true);
+  (settings.getOutputMode as Mock).mockResolvedValue(overrides.outputMode ?? "texty");
 }
 
 // oxlint-disable-next-line max-lines-per-function
@@ -76,7 +78,7 @@ describe("content-script-factory", () => {
       const ctx = createMockContext();
       const handler = await factory.createContentScriptHandler({
         adapter: createMockAdapter(),
-        notificationMessage: "Test",
+        notificationMessages: { texty: "Test", markdown: "Markdown Test" },
         ctx,
       });
 
@@ -91,7 +93,7 @@ describe("content-script-factory", () => {
       setupMocks({ isCopyShortcut: false });
       const handler = await factory.createContentScriptHandler({
         adapter: createMockAdapter(),
-        notificationMessage: "Test",
+        notificationMessages: { texty: "Test", markdown: "Markdown Test" },
         ctx: createMockContext(),
       });
 
@@ -104,53 +106,82 @@ describe("content-script-factory", () => {
       setupMocks({ clipboardHtml: null });
       const handler = await factory.createContentScriptHandler({
         adapter: createMockAdapter(),
-        notificationMessage: "Test",
+        notificationMessages: { texty: "Test", markdown: "Markdown Test" },
         ctx: createMockContext(),
       });
 
       await handler(new KeyboardEvent("keydown"));
 
-      expect(converter.convertToSlackTexty).not.toHaveBeenCalled();
+      expect(processCopy.processAndWrite).not.toHaveBeenCalled();
     });
 
-    it("should skip when conversion produces empty ops", async () => {
-      setupMocks({ slackTextyOps: [] });
+    it("should skip notification when processAndWrite returns false", async () => {
+      setupMocks({ processAndWriteResult: false });
       const handler = await factory.createContentScriptHandler({
         adapter: createMockAdapter(),
-        notificationMessage: "Test",
+        notificationMessages: { texty: "Test", markdown: "Markdown Test" },
         ctx: createMockContext(),
       });
 
       await handler(new KeyboardEvent("keydown"));
 
-      expect(clipboard.writeSlackTexty).not.toHaveBeenCalled();
+      expect(processCopy.processAndWrite).toHaveBeenCalled();
       expect(notification.showNotification).not.toHaveBeenCalled();
     });
 
-    it("should convert and write to clipboard on success", async () => {
+    it("should call processAndWrite and show notification on success", async () => {
       setupMocks();
       const adapter = createMockAdapter();
       const handler = await factory.createContentScriptHandler({
         adapter,
-        notificationMessage: "Copied!",
+        notificationMessages: { texty: "Copied!", markdown: "Markdown Copied!" },
         ctx: createMockContext(),
       });
 
       await handler(new KeyboardEvent("keydown"));
 
-      expect(converter.convertToSlackTexty).toHaveBeenCalledWith("<p>test</p>", adapter);
-      expect(clipboard.writeSlackTexty).toHaveBeenCalled();
+      expect(processCopy.processAndWrite).toHaveBeenCalledWith("<p>test</p>", adapter, "texty");
       expect(notification.showNotification).toHaveBeenCalledWith("Copied!");
     });
   });
 
+  describe("markdown mode", () => {
+    it("should show markdown notification when output mode is markdown", async () => {
+      setupMocks({ outputMode: "markdown" });
+      const adapter = createMockAdapter();
+      const handler = await factory.createContentScriptHandler({
+        adapter,
+        notificationMessages: { texty: "Texty!", markdown: "Markdown!" },
+        ctx: createMockContext(),
+      });
+
+      await handler(new KeyboardEvent("keydown"));
+
+      expect(processCopy.processAndWrite).toHaveBeenCalledWith("<p>test</p>", adapter, "markdown");
+      expect(notification.showNotification).toHaveBeenCalledWith("Markdown!");
+    });
+
+    it("should show texty notification when output mode is texty", async () => {
+      setupMocks({ outputMode: "texty" });
+      const handler = await factory.createContentScriptHandler({
+        adapter: createMockAdapter(),
+        notificationMessages: { texty: "Texty!", markdown: "Markdown!" },
+        ctx: createMockContext(),
+      });
+
+      await handler(new KeyboardEvent("keydown"));
+
+      expect(notification.showNotification).toHaveBeenCalledWith("Texty!");
+    });
+  });
+
   describe("htmlFilter option", () => {
-    it("should skip when filter returns false", async () => {
-      setupMocks();
+    it("should skip when filter returns false in texty mode", async () => {
+      setupMocks({ outputMode: "texty" });
       const htmlFilter = vi.fn().mockReturnValue(false);
       const handler = await factory.createContentScriptHandler({
         adapter: createMockAdapter(),
-        notificationMessage: "Test",
+        notificationMessages: { texty: "Test", markdown: "Markdown Test" },
         ctx: createMockContext(),
         htmlFilter,
       });
@@ -158,22 +189,39 @@ describe("content-script-factory", () => {
       await handler(new KeyboardEvent("keydown"));
 
       expect(htmlFilter).toHaveBeenCalledWith("<p>test</p>");
-      expect(converter.convertToSlackTexty).not.toHaveBeenCalled();
+      expect(processCopy.processAndWrite).not.toHaveBeenCalled();
     });
 
-    it("should process when filter returns true", async () => {
-      setupMocks();
+    it("should process when filter returns true in texty mode", async () => {
+      setupMocks({ outputMode: "texty" });
       const htmlFilter = vi.fn().mockReturnValue(true);
       const handler = await factory.createContentScriptHandler({
         adapter: createMockAdapter(),
-        notificationMessage: "Test",
+        notificationMessages: { texty: "Test", markdown: "Markdown Test" },
         ctx: createMockContext(),
         htmlFilter,
       });
 
       await handler(new KeyboardEvent("keydown"));
 
-      expect(converter.convertToSlackTexty).toHaveBeenCalled();
+      expect(processCopy.processAndWrite).toHaveBeenCalled();
+    });
+
+    it("should bypass htmlFilter in markdown mode", async () => {
+      setupMocks({ outputMode: "markdown" });
+      const htmlFilter = vi.fn().mockReturnValue(false);
+      const handler = await factory.createContentScriptHandler({
+        adapter: createMockAdapter(),
+        notificationMessages: { texty: "Test", markdown: "Markdown Test" },
+        ctx: createMockContext(),
+        htmlFilter,
+      });
+
+      await handler(new KeyboardEvent("keydown"));
+
+      // Filter should NOT be called in markdown mode
+      expect(htmlFilter).not.toHaveBeenCalled();
+      expect(processCopy.processAndWrite).toHaveBeenCalled();
     });
   });
 });

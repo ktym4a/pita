@@ -2,6 +2,7 @@ import { applyI18n, setupToggleHandlers, updateUI, type I18nApi } from "@/lib/po
 import {
   getSettings,
   toggleGlobalEnabled,
+  toggleOutputMode,
   toggleProviderEnabled,
   watchSettings,
 } from "@/lib/storage/settings";
@@ -17,6 +18,7 @@ function init(): void {
     PROVIDERS,
     () => toggleGlobalEnabled(),
     (providerId) => toggleProviderEnabled(providerId),
+    () => toggleOutputMode(),
   );
 
   void getSettings().then((settings) => {

@@ -20,7 +20,10 @@ export default defineContentScript({
 
     const handleCopy = await createContentScriptHandler({
       adapter: googleDocsAdapter,
-      notificationMessage: browser.i18n.getMessage("notificationFormattedForSlack"),
+      notificationMessages: {
+        texty: browser.i18n.getMessage("notificationFormattedForSlack"),
+        markdown: browser.i18n.getMessage("notificationFormattedAsMarkdown"),
+      },
       htmlFilter: containsLists,
       ctx,
     });
