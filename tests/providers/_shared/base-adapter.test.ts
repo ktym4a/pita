@@ -1,8 +1,7 @@
 import { describe, expect, it, beforeEach, vi } from "vitest";
 
-import type { ProviderConfig } from "@/providers/_shared/types";
-
 import { BaseAdapter } from "@/providers/_shared/base-adapter";
+import type { ProviderConfig } from "@/providers/_shared/types";
 
 // Concrete implementation for testing
 class TestAdapter extends BaseAdapter {

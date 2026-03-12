@@ -19,9 +19,8 @@
  * handled by subsequent walker iterations.
  */
 
-import type { SlackTextAttributes, SlackTextOp } from "@/providers/_shared/types";
-
 import { isOrderedListItem } from "@/providers/_shared/constants";
+import type { SlackTextAttributes, SlackTextOp } from "@/providers/_shared/types";
 
 import type { BlockHandler, HandlerContext } from "../types";
 

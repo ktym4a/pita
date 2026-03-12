@@ -21,7 +21,6 @@
 import type { ProviderSettings } from "@/lib/storage/settings";
 
 import type { ServiceAdapter } from "./_shared/types";
-
 import { googleDocsAdapter } from "./google-docs";
 import { notionAdapter } from "./notion";
 

@@ -2,9 +2,10 @@ import { createContentScriptHandler } from "@/lib/core/content-script-factory";
 import { containsLists } from "@/lib/core/converter";
 import { isProviderEnabled, watchSettings } from "@/lib/storage/settings";
 import { cleanupNotification } from "@/lib/ui/notification";
+import { googleDocsAdapter } from "@/providers/google-docs";
+
 // oxlint-disable-next-line import/no-unassigned-import -- CSS side-effect import for Shadow DOM styles
 import "@/lib/ui/notification.css";
-import { googleDocsAdapter } from "@/providers/google-docs";
 
 export default defineContentScript({
   matches: [...googleDocsAdapter.contentScriptMatches],

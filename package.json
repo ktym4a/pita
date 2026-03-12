@@ -32,15 +32,15 @@
     "zip": "wxt zip"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.5.2",
-    "@changesets/cli": "^2.29.8",
+    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/cli": "^2.30.0",
     "@vitest/coverage-v8": "^4.0.18",
     "jsdom": "^28.1.0",
-    "oxfmt": "^0.28.0",
-    "oxlint": "^1.43.0",
-    "oxlint-tsgolint": "^0.11.5",
+    "oxfmt": "^0.38.0",
+    "oxlint": "^1.53.0",
+    "oxlint-tsgolint": "^0.16.0",
     "vitest": "^4.0.18",
-    "wxt": "^0.20.14"
+    "wxt": "^0.20.18"
   },
   "engines": {
     "node": ">=24",

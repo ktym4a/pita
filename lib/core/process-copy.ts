@@ -5,15 +5,14 @@
  * Extracted from content-script-factory to keep module dependencies focused.
  */
 
-import type { OutputMode } from "@/lib/storage/settings";
-import type { ServiceAdapter } from "@/providers/_shared/types";
-
 import { writePlainText, writeSlackTexty } from "@/lib/core/clipboard";
 import {
   convertToSlackMarkdown,
   convertToPlainText,
   convertToSlackTexty,
 } from "@/lib/core/converter";
+import type { OutputMode } from "@/lib/storage/settings";
+import type { ServiceAdapter } from "@/providers/_shared/types";
 
 /**
  * Convert HTML and write to clipboard based on output mode.

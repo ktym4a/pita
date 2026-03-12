@@ -10,9 +10,8 @@
  * A flat string output is simpler to build recursively.
  */
 
-import type { ServiceAdapter } from "@/providers/_shared/types";
-
 import { isOrderedListItem } from "@/providers/_shared/constants";
+import type { ServiceAdapter } from "@/providers/_shared/types";
 
 import {
   type InlineFormatting,

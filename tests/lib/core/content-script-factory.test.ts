@@ -1,11 +1,9 @@
-import type { ContentScriptContext } from "wxt/utils/content-script-context";
-
 // oxlint-disable import/max-dependencies
 import { describe, expect, it, vi, beforeEach, type Mock } from "vitest";
-
-import type { ServiceAdapter } from "@/providers/_shared/types";
+import type { ContentScriptContext } from "wxt/utils/content-script-context";
 
 import * as factory from "@/lib/core/content-script-factory";
+import type { ServiceAdapter } from "@/providers/_shared/types";
 
 vi.mock("@/lib/core/clipboard", () => ({
   isCopyShortcut: vi.fn(),

@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import type { ServiceAdapter } from "@/providers/_shared/types";
-
 import { convertToSlackTexty } from "@/lib/core/converter";
+import type { ServiceAdapter } from "@/providers/_shared/types";
 
 /**
  * Create a mock adapter for testing.

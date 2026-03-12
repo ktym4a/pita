@@ -17,9 +17,8 @@
  * This prevents empty divs (used for layout) from creating blank lines.
  */
 
-import type { SlackTextOp } from "@/providers/_shared/types";
-
 import { INLINE_TAGS } from "@/providers/_shared/constants";
+import type { SlackTextOp } from "@/providers/_shared/types";
 
 import type { BlockHandler, HandlerContext } from "../types";
 

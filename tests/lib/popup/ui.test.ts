@@ -1,9 +1,8 @@
 // oxlint-disable max-lines
 import { describe, expect, it, beforeEach, vi } from "vitest";
 
-import type { PitaSettings } from "@/lib/storage/settings";
-
 import { applyI18n, updateUI, setupToggleHandlers, type I18nApi } from "@/lib/popup/ui";
+import type { PitaSettings } from "@/lib/storage/settings";
 
 function createTestDOM(html: string): void {
   // Using innerHTML is safe here - this is a test file with hardcoded test HTML

@@ -15,7 +15,6 @@
  */
 
 import type { BlockHandler } from "../types";
-
 import { blockquoteHandler } from "./blockquote";
 import { codeBlockHandler } from "./code-block";
 import { divHandler } from "./div";
