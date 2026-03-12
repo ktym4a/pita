@@ -11,7 +11,6 @@
  */
 
 import { storage } from "#imports";
-
 import { getDefaultProviderSettings } from "@/providers/registry";
 
 /**

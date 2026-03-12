@@ -1,9 +1,10 @@
 import { createContentScriptHandler } from "@/lib/core/content-script-factory";
 import { isProviderEnabled, watchSettings } from "@/lib/storage/settings";
 import { cleanupNotification } from "@/lib/ui/notification";
+import { notionAdapter } from "@/providers/notion";
+
 // oxlint-disable-next-line import/no-unassigned-import -- CSS side-effect import for Shadow DOM styles
 import "@/lib/ui/notification.css";
-import { notionAdapter } from "@/providers/notion";
 
 export default defineContentScript({
   matches: [...notionAdapter.contentScriptMatches],

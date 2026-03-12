@@ -13,9 +13,8 @@
  * to eliminate DRY violation while maintaining both behaviors.
  */
 
-import type { ServiceAdapter, SlackTextAttributes, SlackTextOp } from "@/providers/_shared/types";
-
 import { STYLE_PATTERNS } from "@/providers/_shared/constants";
+import type { ServiceAdapter, SlackTextAttributes, SlackTextOp } from "@/providers/_shared/types";
 
 import { createTextOp } from "./utils";
 

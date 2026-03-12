@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
 
+import { containsLists, convertToPlainText, convertToSlackTexty } from "@/lib/core/converter";
 import type { SlackTextOp } from "@/providers/_shared/types";
 import type { ServiceAdapter } from "@/providers/_shared/types";
-
-import { containsLists, convertToPlainText, convertToSlackTexty } from "@/lib/core/converter";
 
 /**
  * Create a mock adapter for testing.

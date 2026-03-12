@@ -18,10 +18,9 @@
 
 import type { ServiceAdapter, SlackTextOp, SlackTexty } from "@/providers/_shared/types";
 
-import type { HandlerContext } from "./types";
-
 import { getFormattedOps } from "./formatters";
 import { BLOCK_HANDLERS } from "./handlers";
+import type { HandlerContext } from "./types";
 import { skipDescendants } from "./utils";
 
 /**

@@ -7,9 +7,8 @@
  * Separated from markdown-converter.ts to keep module sizes manageable.
  */
 
-import type { ServiceAdapter } from "@/providers/_shared/types";
-
 import { STYLE_PATTERNS } from "@/providers/_shared/constants";
+import type { ServiceAdapter } from "@/providers/_shared/types";
 
 /**
  * Inline formatting state tracked during recursion.

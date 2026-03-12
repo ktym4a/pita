@@ -14,12 +14,11 @@
 
 import type { ContentScriptContext } from "wxt/utils/content-script-context";
 
-import type { ServiceAdapter } from "@/providers/_shared/types";
-
 import { isCopyShortcut, waitForClipboard, readClipboardHtml } from "@/lib/core/clipboard";
 import { processAndWrite } from "@/lib/core/process-copy";
 import { type OutputMode, getOutputMode } from "@/lib/storage/settings";
 import { initNotification, showNotification } from "@/lib/ui/notification";
+import type { ServiceAdapter } from "@/providers/_shared/types";
 
 /**
  * Configuration options for content script handler
