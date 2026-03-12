@@ -73,6 +73,7 @@ jobs:
 
       - name: Submit to Chrome Web Store (API v2)
         if: steps.changesets.outputs.hasChangesets == 'false'
+        continue-on-error: true
         run: ./scripts/upload-chrome-v2.sh
         env:
           CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
