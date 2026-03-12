@@ -5,6 +5,9 @@
 
 set -euo pipefail
 
+MAX_RETRIES=3
+RETRY_DELAY=5
+
 # Check required commands
 for cmd in curl jq node; do
   if ! command -v "$cmd" &> /dev/null; then
@@ -40,25 +43,57 @@ if [ ! -f "$ZIP_FILE" ]; then
 fi
 
 echo "=== Step 1: Get Access Token ==="
-TOKEN_RESPONSE=$(curl -s --fail-with-body "https://oauth2.googleapis.com/token" \
-  -d "client_id=$CHROME_CLIENT_ID" \
-  -d "client_secret=$CHROME_CLIENT_SECRET" \
-  -d "refresh_token=$CHROME_REFRESH_TOKEN" \
-  -d "grant_type=refresh_token") || {
-  echo "Error: Failed to connect to OAuth server"
-  exit 1
-}
+ACCESS_TOKEN=""
+for attempt in $(seq 1 "$MAX_RETRIES"); do
+  TOKEN_RESPONSE=$(curl -s -w "\n%{http_code}" "https://oauth2.googleapis.com/token" \
+    -d "client_id=$CHROME_CLIENT_ID" \
+    -d "client_secret=$CHROME_CLIENT_SECRET" \
+    -d "refresh_token=$CHROME_REFRESH_TOKEN" \
+    -d "grant_type=refresh_token" 2>&1) || {
+    echo "Attempt $attempt/$MAX_RETRIES: curl connection failed"
+    if [ "$attempt" -lt "$MAX_RETRIES" ]; then
+      echo "Retrying in ${RETRY_DELAY}s..."
+      sleep "$RETRY_DELAY"
+      continue
+    fi
+    echo "Error: Failed to connect to OAuth server after $MAX_RETRIES attempts"
+    exit 1
+  }
 
-ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
+  HTTP_CODE=$(echo "$TOKEN_RESPONSE" | tail -n1)
+  TOKEN_BODY=$(echo "$TOKEN_RESPONSE" | sed '$d')
+  echo "OAuth HTTP Status: $HTTP_CODE"
 
-if [ "$ACCESS_TOKEN" == "null" ] || [ -z "$ACCESS_TOKEN" ]; then
-  echo "Error: Failed to get access token"
-  # Extract only error message, not the full response (may contain sensitive data)
-  echo "$TOKEN_RESPONSE" | jq -r '.error_description // .error // "Unknown error"'
-  exit 1
-fi
+  if [ "$HTTP_CODE" = "200" ]; then
+    ACCESS_TOKEN=$(echo "$TOKEN_BODY" | jq -r '.access_token')
+    if [ "$ACCESS_TOKEN" != "null" ] && [ -n "$ACCESS_TOKEN" ]; then
+      echo "Access token obtained successfully"
+      break
+    fi
+    echo "Error: Response was 200 but no access_token found"
+    exit 1
+  fi
 
-echo "Access token obtained successfully"
+  # Extract error info (safe to show)
+  ERROR_MSG=$(echo "$TOKEN_BODY" | jq -r '.error // "unknown"' 2>/dev/null || echo "unknown")
+  ERROR_DESC=$(echo "$TOKEN_BODY" | jq -r '.error_description // "no description"' 2>/dev/null || echo "no description")
+  echo "Attempt $attempt/$MAX_RETRIES: OAuth error: $ERROR_MSG - $ERROR_DESC"
+
+  # Don't retry on auth errors (token expired/revoked)
+  if [ "$ERROR_MSG" = "invalid_grant" ] || [ "$ERROR_MSG" = "invalid_client" ]; then
+    echo "Error: Authentication failed. Refresh token may be expired or revoked."
+    echo "Regenerate the refresh token and update CHROME_REFRESH_TOKEN secret."
+    exit 1
+  fi
+
+  if [ "$attempt" -lt "$MAX_RETRIES" ]; then
+    echo "Retrying in ${RETRY_DELAY}s..."
+    sleep "$RETRY_DELAY"
+  else
+    echo "Error: Failed to get access token after $MAX_RETRIES attempts"
+    exit 1
+  fi
+done
 
 echo ""
 echo "=== Step 2: Upload ZIP file (API v2) ==="
