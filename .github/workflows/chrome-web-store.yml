@@ -21,7 +21,7 @@ jobs:
           ref: pita@${{ inputs.version }}
 
       - name: Setup mise
-        uses: jdx/mise-action@v3
+        uses: jdx/mise-action@v4
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

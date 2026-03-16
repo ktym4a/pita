@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: jdx/mise-action@v3
+      - uses: jdx/mise-action@v4
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -33,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: jdx/mise-action@v3
+      - uses: jdx/mise-action@v4
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -47,7 +47,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: jdx/mise-action@v3
+      - uses: jdx/mise-action@v4
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
