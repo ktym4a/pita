@@ -34,13 +34,13 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.30.0",
-    "@vitest/coverage-v8": "^4.1.0",
-    "jsdom": "^29.0.0",
-    "oxfmt": "^0.40.0",
-    "oxlint": "^1.55.0",
-    "oxlint-tsgolint": "^0.17.0",
-    "vitest": "^4.1.0",
-    "wxt": "^0.20.19"
+    "@vitest/coverage-v8": "^4.1.2",
+    "jsdom": "^29.0.1",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0",
+    "oxlint-tsgolint": "^0.18.1",
+    "vitest": "^4.1.2",
+    "wxt": "^0.20.20"
   },
   "engines": {
     "node": ">=24",
