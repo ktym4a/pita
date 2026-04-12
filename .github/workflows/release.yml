@@ -63,7 +63,7 @@ jobs:
 
       - name: Upload to GitHub Release
         if: steps.changesets.outputs.hasChangesets == 'false'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: pita@${{ steps.pkg.outputs.version }}
           files: .output/*.zip
